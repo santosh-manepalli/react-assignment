@@ -40,7 +40,7 @@ const UserTable = ({ users }: Props) => {
                     {table.getHeaderGroups().map((hg) => (
                         <tr key={hg.id} className="border-b text-gray-800 uppercase">
                             {hg.headers.map((header) => (
-                                <th key={header.id} onClick={header.column.getToggleSortingHandler()} className="px-4 pr-2 py-4 font-medium text-left">
+                                <th key={header.id} onClick={header.column.getToggleSortingHandler()} className="px-4 pr-2 py-4 font-medium text-left cursor-pointer">
                                     {flexRender(header.column.columnDef.header, header.getContext())}
                                     {{
                                         asc: <span className="pl-2">↑</span>,
