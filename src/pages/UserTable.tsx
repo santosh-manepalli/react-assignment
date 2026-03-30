@@ -1,7 +1,7 @@
-import { useReactTable, PaginationState, flexRender, SortingState, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel } from "@tanstack/react-table";
+import { useReactTable, PaginationState, flexRender, SortingState, ColumnDef, getCoreRowModel, getSortedRowModel, getFilteredRowModel, getPaginationRowModel } from "@tanstack/react-table";
 import { columns } from "../features/users/table/userTableConfig";
 import { User } from "../utils/types";
-import React from "react";
+import { useState } from "react";
 
 
 type Props = {
@@ -9,9 +9,9 @@ type Props = {
 };
 
 const UserTable = ({ users }: Props) => {
-    const [sorting, setSorting] = React.useState<SortingState>([]);
-
-    const [pagination, setPagination] = React.useState<PaginationState>({
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [globalFilter, setGlobalFilter] = useState("");
+    const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
     });
@@ -19,15 +19,18 @@ const UserTable = ({ users }: Props) => {
     const table = useReactTable({
         data: users,
         columns,
+        state: {
+            globalFilter,
+            pagination,
+            sorting
+        },
+        onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
-        //onSortingChange: setSorting, 
+        onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onPaginationChange: setPagination,
-        state: {
-            pagination,
-        }
+        onPaginationChange: setPagination
     });
 
     return (
@@ -37,7 +40,7 @@ const UserTable = ({ users }: Props) => {
                     {table.getHeaderGroups().map((hg) => (
                         <tr key={hg.id} className="border-b text-gray-800 uppercase">
                             {hg.headers.map((header) => (
-                                <th key={header.id} className="px-4 pr-2 py-4 font-medium text-left">
+                                <th key={header.id} onClick={header.column.getToggleSortingHandler()} className="px-4 pr-2 py-4 font-medium text-left">
                                     {flexRender(header.column.columnDef.header, header.getContext())}
                                     {{
                                         asc: <span className="pl-2">↑</span>,
